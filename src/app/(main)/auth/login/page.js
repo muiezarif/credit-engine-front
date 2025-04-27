@@ -3,9 +3,11 @@ import { useState } from 'react';
 import { Box, Container, Typography, TextField, Button, Paper, InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff, Email, Lock } from '@mui/icons-material';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useRouter();
 
   return (
     <Box sx={{
@@ -87,6 +89,7 @@ export default function LoginPage() {
                   bgcolor: '#1ABED0'
                 }
               }}
+              onClick={() => navigate.push('/dashboard')}
             >
               Sign In
             </Button>
