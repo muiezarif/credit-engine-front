@@ -1,20 +1,52 @@
 'use client';
 import { useState } from 'react';
-import { Box, Drawer, AppBar, Toolbar, Typography, IconButton, List, ListItem, ListItemIcon, ListItemText, ListItemButton } from '@mui/material';
-import { Menu as MenuIcon, Dashboard, Assessment, Settings, Person, CreditCard, Logout } from '@mui/icons-material';
+import { Box, Drawer, AppBar, Toolbar, Typography, IconButton, List, ListItem, ListItemIcon, ListItemText, ListItemButton,Collapse } from '@mui/material';
+import { Menu as MenuIcon, 
+  Settings, 
+  People, 
+  ExpandLess, 
+  ExpandMore,
+  Assessment,
+  Gavel,
+  Warning,
+  AttachMoney,
+  Calculate,
+  Security,
+  Analytics,
+  Message,
+  Engineering } from '@mui/icons-material';
 import Link from 'next/link';
 
 const DRAWER_WIDTH = 280;
 
 export default function DashboardLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-
+  const [configOpen, setConfigOpen] = useState(false);
   const menuItems = [
-    { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
-    { text: 'Credit Analysis', icon: <Assessment />, path: '/analysis' },
-    { text: 'Applications', icon: <CreditCard />, path: '/applications' },
-    { text: 'Profile', icon: <Person />, path: '/profile' },
-    { text: 'Settings', icon: <Settings />, path: '/settings' },
+    { 
+      text: 'Credit Risk Engine', 
+      icon: <Assessment />, 
+      path: '/dashboard' 
+    },
+    { 
+      text: 'Users', 
+      icon: <People />, 
+      path: '/users' 
+    },
+    { 
+      text: 'Engine Configurations', 
+      icon: <Engineering />, 
+      isExpandable: true,
+      subItems: [
+        { text: 'Scoring Rules', icon: <Gavel />, path: '/config/scoring-rules' },
+        { text: 'Knock out Rules', icon: <Warning />, path: '/config/knockout-rules' },
+        { text: 'Risk Rating Thresholds', icon: <Analytics />, path: '/config/risk-thresholds' },
+        { text: 'Loan Offer Ranges', icon: <AttachMoney />, path: '/config/loan-ranges' },
+        { text: 'DBR Settings', icon: <Calculate />, path: '/config/dbr-settings' },
+        { text: 'Fraud Detection Rules', icon: <Security />, path: '/config/fraud-rules' },
+        { text: 'Insights Messages', icon: <Message />, path: '/config/insights' },
+      ]
+    }
   ];
 
   const drawer = (
@@ -30,44 +62,79 @@ export default function DashboardLayout({ children }) {
       </Box>
       <List>
         {menuItems.map((item) => (
-          <ListItem key={item.text} disablePadding>
-            <ListItemButton
-              component={Link}
-              href={item.path}
-              sx={{
-                mx: 2,
-                borderRadius: 1,
-                '&:hover': {
-                  bgcolor: 'rgba(44, 211, 225, 0.08)',
-                }
-              }}
-            >
-              <ListItemIcon sx={{ color: '#2CD3E1' }}>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
+          <Box key={item.text}>
+            <ListItem key={item.text} disablePadding>
+              {item.isExpandable ? (
+                <ListItemButton
+                  onClick={() => setConfigOpen(!configOpen)}
+                  sx={{
+                    mx: 2,
+                    borderRadius: 1,
+                    '&:hover': {
+                      bgcolor: 'rgba(44, 211, 225, 0.08)',
+                    }
+                  }}
+                >
+                  <ListItemIcon sx={{ color: '#2CD3E1' }}>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.text} />
+                  {configOpen ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+              ) : (
+                <ListItemButton
+                  component={Link}
+                  href={item.path}
+                  sx={{
+                    mx: 2,
+                    borderRadius: 1,
+                    '&:hover': {
+                      bgcolor: 'rgba(44, 211, 225, 0.08)',
+                    }
+                  }}
+                >
+                  <ListItemIcon sx={{ color: '#2CD3E1' }}>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              )}
+            </ListItem>
+            {item.isExpandable && (
+              <Collapse in={configOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  {item.subItems.map((subItem) => (
+                    <ListItemButton
+                      key={subItem.text}
+                      component={Link}
+                      href={subItem.path}
+                      sx={{
+                        pl: 6,
+                        py: 1,
+                        mx: 2,
+                        borderRadius: 1,
+                        '&:hover': {
+                          bgcolor: 'rgba(44, 211, 225, 0.08)',
+                        }
+                      }}
+                    >
+                      <ListItemIcon sx={{ color: '#2CD3E1', minWidth: '40px' }}>
+                        {subItem.icon}
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary={subItem.text} 
+                        primaryTypographyProps={{ 
+                          fontSize: '0.9rem',
+                          fontWeight: 500
+                        }} 
+                      />
+                    </ListItemButton>
+                  ))}
+                </List>
+              </Collapse>
+            )}
+          </Box>
         ))}
-        <ListItem disablePadding sx={{ mt: 2 }}>
-          <ListItemButton
-            component={Link}
-            href="/"
-            sx={{
-              mx: 2,
-              borderRadius: 1,
-              color: '#ff4444',
-              '&:hover': {
-                bgcolor: 'rgba(255, 68, 68, 0.08)',
-              }
-            }}
-          >
-            <ListItemIcon sx={{ color: 'inherit' }}>
-              <Logout />
-            </ListItemIcon>
-            <ListItemText primary="Logout" />
-          </ListItemButton>
-        </ListItem>
       </List>
     </Box>
   );
