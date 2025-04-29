@@ -4,8 +4,14 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import SecurityIcon from '@mui/icons-material/Security';
 import SpeedIcon from '@mui/icons-material/Speed';
 import Link from 'next/link';
+import { redirect } from 'next/navigation'; // for App Router (Next.js 13+)
+import { useEffect } from 'react';
+
 
 export default function LandingPage() {
+  useEffect(() => {
+      redirect('/dashboard');
+  },[])
   return (
     <Box>
       {/* Hero Section */}
