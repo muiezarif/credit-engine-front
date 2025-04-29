@@ -139,11 +139,9 @@ export default function DashboardPage() {
                 Normalized Score
               </Typography>
               <Typography variant="h2" sx={{ color: '#0A2647', fontWeight: 700 }}>
-                {result?.scoreResult.normalizedScore.toFixed(2)}
+                {result?.scoreResult.normalizedScore.toFixed(2)}%
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                out of 100 points
-              </Typography>
+
             </Paper>
           </Grid>
 
@@ -178,7 +176,7 @@ export default function DashboardPage() {
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="h4" sx={{ color: '#0A2647', fontWeight: 700 }}>
-                  Range: SAR{result.loanOffer.minimum.toLocaleString()} - SAR{result.loanOffer.maximum.toLocaleString()}
+                  Range: SAR{((result.loanOffer.minimum + result.loanOffer.maximum) / 2).toFixed(0)}
                 </Typography>
               </Box>
             </Paper>
