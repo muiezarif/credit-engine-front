@@ -29,7 +29,7 @@ export default function DashboardLayout({ children }) {
       path: '/dashboard' 
     },
     { 
-      text: 'Users', 
+      text: 'Mock Users', 
       icon: <People />, 
       path: '/users' 
     },

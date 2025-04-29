@@ -28,43 +28,20 @@ export default function DashboardPage() {
   const [nationalId, setNationalId] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
 
-  // Dummy result for demonstration
-  const dummyResult = {
-    riskScore: 98,
-    normalizedScore: 81.67,
-    riskRating: 'B',
-    loanSuggestion: {
-      min: 50000,
-      max: 200000,
-      recommended: 150000
-    },
-    dbrCheck: {
-      status: 'Passed',
-      value: '45%'
-    },
-    insights: {
-      positive: [
-        'Strong credit history with no defaults',
-        'Stable employment record',
-        'Regular salary credits'
-      ],
-      negative: [
-        'High existing debt burden',
-        'Multiple recent credit inquiries'
-      ],
-      alerts: [
-        'Recent change in employment',
-        'Large cash withdrawal in last month'
-      ]
-    }
-  };
 
   const handleCreditCheck = async() => {
     setLoading(true);
     // Simulate API call
     await creditEngine.get(`/evaluation-flow/evaluate/${nationalId}`).then((response) => {
       console.log(response.data);
+      if(response.data.result.knockoutResult.details.length > 0){
+        setResult(null);
+        setError(response.data.result.knockoutResult.details[0]);
+        setLoading(false);
+        return;
+      }
       setResult(response.data.result);
       setLoading(false);
 
@@ -86,10 +63,19 @@ export default function DashboardPage() {
     return colors[rating] || '#757575';
   };
 
+  const riskRatingTexts = {
+    'A': 'Excellent',
+    'B': 'Great',
+    'C': 'Good',
+    'D': 'Neutral',
+    'E': 'Bad'
+  };
+
 
 
   return (
     <Box>
+      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}- Knockout rule</Alert>}
       <Typography variant="h4" sx={{ mb: 4, color: '#0A2647', fontWeight: 600 }}>
         Credit Risk Engine
       </Typography>
@@ -175,11 +161,7 @@ export default function DashboardPage() {
               >
                 {result.riskRating}
               </Typography>
-              <Rating 
-                value={6 - ['A','B','C','D','E'].indexOf(result.riskRating)} 
-                readOnly 
-                max={5}
-              />
+              {riskRatingTexts[result.riskRating] || 'Unknown'}
             </Paper>
           </Grid>
 
@@ -187,7 +169,7 @@ export default function DashboardPage() {
           <Grid item xs={12} md={6}>
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" sx={{ mb: 2, color: '#0A2647' }}>
-                Loan Amount Suggestion
+                Loan Offer
               </Typography>
               <Box sx={{ mb: 2 }}>
                 <Typography variant="body2" color="text.secondary">
@@ -195,7 +177,7 @@ export default function DashboardPage() {
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="h4" sx={{ color: '#0A2647', fontWeight: 700 }}>
                   Range: SAR{result.loanOffer.minimum.toLocaleString()} - SAR{result.loanOffer.maximum.toLocaleString()}
                 </Typography>
               </Box>
@@ -210,8 +192,7 @@ export default function DashboardPage() {
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <Chip
-                  icon={result.dbrResult.passed ? <CheckCircle /> : <Error />}
-                  label={result.dbrResult.passed}
+                  label={result.dbrResult.passed?"Pass":"Fail"}
                   color={result.dbrResult.passed ? 'success' : 'error'}
                   sx={{ px: 2 }}
                 />
