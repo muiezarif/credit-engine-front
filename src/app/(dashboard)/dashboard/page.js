@@ -176,7 +176,7 @@ export default function DashboardPage() {
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="h4" sx={{ color: '#0A2647', fontWeight: 700 }}>
-                  Range: SAR{((result.loanOffer.minimum + result.loanOffer.maximum) / 2).toFixed(0)}
+                  SAR{((result.loanOffer.minimum + result.loanOffer.maximum) / 2).toFixed(0)}
                 </Typography>
               </Box>
             </Paper>
